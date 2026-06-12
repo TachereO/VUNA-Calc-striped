@@ -46,8 +46,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc-striped:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc-striped:${{ github.sha }}
 
   deploy:
     name: Deploy via FTP
@@ -72,4 +72,6 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ./dist/
-          server-dir: ./public_html/
+          # FIX: If your FTP account is already jailed to public_html, use ./ 
+          # instead of ./public_html/ to avoid uploading to public_html/public_html/
+          server-dir: ./

@@ -21,4 +21,13 @@ if (existsSync(join(root, 'assets'))) {
   console.log('Copied: assets/ -> dist/assets/');
 }
 
+// FIX: Copy script.js to dist root so calculator.html can find it
+if (existsSync(join(root, 'assets/js/script.js'))) {
+  cpSync(join(root, 'assets/js/script.js'), join(root, 'dist/script.js'));
+  console.log('Copied: assets/js/script.js -> dist/script.js');
+} else if (existsSync(join(root, 'script.js'))) {
+  cpSync(join(root, 'script.js'), join(root, 'dist/script.js'));
+  console.log('Copied: script.js -> dist/script.js');
+}
+
 console.log('\n✅ Build complete -> dist/');
