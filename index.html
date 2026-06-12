@@ -1,377 +1,473 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculator</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VUNA Calculator - Home</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary-color: #0d6efd;
-      --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --btn-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      --btn-hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+      --primary: #0d6efd;
+      --primary-dark: #0b5ed7;
+      --secondary: #6c757d;
+      --accent: #198754;
+      --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
 
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f8f9fa;
+      overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero {
       background: var(--bg-gradient);
       min-height: 100vh;
       display: flex;
       align-items: center;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    .calculator-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      position: relative;
       overflow: hidden;
-      transition: transform 0.3s ease;
     }
 
-    .calculator-card:hover {
-      transform: translateY(-5px);
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
     }
 
-    .display-container {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 16px;
-      margin-bottom: 20px;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-      height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
+    .hero-content {
+      position: relative;
+      z-index: 2;
     }
 
-    #result {
-      text-align: right;
-      font-size: 38px;
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .hero .lead {
+      font-size: 1.3rem;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 2rem;
+    }
+
+    .btn-hero {
+      padding: 15px 40px;
+      font-size: 1.1rem;
       font-weight: 600;
-      height: auto;
+      border-radius: 50px;
+      background: white;
+      color: var(--primary);
       border: none;
-      background: transparent;
-      padding: 0;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-hero:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+      color: var(--primary-dark);
+    }
+
+    .btn-hero i {
+      margin-left: 10px;
+    }
+
+    /* Features Section */
+    .features {
+      padding: 80px 0;
+      background: white;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
       color: #212529;
-      box-shadow: none;
-      width: 100%;
+      margin-bottom: 15px;
     }
 
-    .btn-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+    .section-title p {
+      color: #6c757d;
+      font-size: 1.1rem;
     }
 
-    .calculator .btn {
-      height: 60px;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: 600;
+    .feature-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(0,0,0,0.05);
+      height: 100%;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
-      border: none;
-      box-shadow: var(--btn-shadow);
-    }
-
-    .calculator .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--btn-hover-shadow);
-    }
-
-    .calculator .btn:active {
-      transform: translateY(0);
-    }
-
-    .btn-light {
-      background: #ffffff;
-      color: #495057;
-    }
-
-    .btn-light:hover {
-      background: #f1f3f5;
-    }
-
-    .btn-operator {
-      background: #e7f1ff;
-      color: var(--primary-color);
-    }
-
-    .btn-operator:hover {
-      background: #cfe2ff;
-    }
-
-    .btn-action {
-      background: #fff5f5;
-      color: #fa5252;
-    }
-
-    .btn-action:hover {
-      background: #ffe3e3;
-    }
-
-    .btn-equals {
-      background: var(--primary-color);
-      color: white;
-      grid-column: span 4;
-    }
-
-    .btn-equals:hover {
-      background: #0b5ed7;
+      margin: 0 auto 25px;
+      font-size: 2rem;
       color: white;
     }
 
-    .btn-special {
-      background: #e7f6ed;
-      color: #198754;
-      font-size: 16px;
-    }
+    .feature-icon.blue { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .feature-icon.green { background: linear-gradient(135deg, #11998e, #38ef7d); }
+    .feature-icon.orange { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .feature-icon.purple { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .feature-icon.red { background: linear-gradient(135deg, #fa709a, #fee140); }
+    .feature-icon.teal { background: linear-gradient(135deg, #30cfd0, #330867); }
 
-    .btn-special:hover {
-      background: #d1f0dd;
-    }
-
-    .group-header {
-      color: #495057;
+    .feature-card h4 {
       font-weight: 700;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      color: #212529;
+    }
+
+    .feature-card p {
+      color: #6c757d;
+      line-height: 1.6;
+    }
+
+    /* Stats Section */
+    .stats {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      padding: 60px 0;
+      color: white;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #00d4ff;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.7);
       text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* About Section */
+    .about {
+      padding: 80px 0;
+      background: #f8f9fa;
+    }
+
+    .about-img {
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .about-img img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* CTA Section */
+    .cta {
+      background: var(--bg-gradient);
+      padding: 80px 0;
+      text-align: center;
+      color: white;
+    }
+
+    .cta h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .cta p {
       font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 30px;
     }
 
-    .theme-toggle-btn {
+    /* Footer */
+    footer {
+      background: #1a1a2e;
+      color: rgba(255,255,255,0.7);
+      padding: 40px 0;
+      text-align: center;
+    }
+
+    footer a {
+      color: #00d4ff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: white;
+    }
+
+    /* Floating calc button */
+    .float-calc {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 999;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
     }
 
-    body.dark-mode {
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-      color: #e0e0e0;
+    .float-calc:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      color: white;
     }
 
-    body.dark-mode .calculator-card {
-      background: rgba(45, 45, 45, 0.9);
-      border-color: rgba(255, 255, 255, 0.1);
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      .section-title h2 { font-size: 2rem; }
+      .stat-number { font-size: 2rem; }
     }
 
-    body.dark-mode .display-container {
-      background: #333333;
-      color: #e0e0e0;
+    /* Animation */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    body.dark-mode #result {
-      color: #e0e0e0;
-    }
-
-    body.dark-mode .btn-light {
-      background: #444444;
-      color: #e0e0e0;
-    }
-
-    body.dark-mode .btn-light:hover {
-      background: #555555;
-    }
-
-    body.dark-mode .accordion-button {
-      background-color: #444444;
-      color: #e0e0e0;
-    }
-
-    body.dark-mode .accordion-button:not(.collapsed) {
-      background-color: #555555;
-      color: #e0e0e0;
-    }
-
-    body.dark-mode .form-control,
-    body.dark-mode .form-select {
-      background-color: #444444;
-      color: #e0e0e0;
-      border-color: #555555;
-    }
-
-    body.dark-mode .form-control:focus,
-    body.dark-mode .form-select:focus {
-      background-color: #555555;
-      color: #e0e0e0;
-      border-color: #0d6efd;
-    }
-
-    body.dark-mode .alert-info {
-      background-color: #2d3748;
-      color: #e0e0e0;
-      border-color: #4a5568;
-    }
-
-    body.dark-mode .alert-warning {
-      background-color: #4a3b28;
-      color: #e0e0e0;
-      border-color: #6b5635;
-    }
-
-    body.dark-mode .alert-success {
-      background-color: #1a3a2a;
-      color: #e0e0e0;
-      border-color: #2d5a3f;
+    .animate-fade-in {
+      animation: fadeInUp 0.8s ease forwards;
     }
   </style>
 <base target="_blank">
 </head>
-
 <body>
-  <!-- Theme Toggle Button -->
-  <button class="btn btn-outline-secondary theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()"
-    title="Toggle dark/light mode">
-    🌙
-  </button>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-lg-6 col-md-6 col-sm-8">
-        <div class="border border-dotted border-3 rounded-3 p-3 mb-4 bg-white bg-opacity-50">
-          <h4 class="text-center group-header mb-0">VUNA CALCULATOR</h4>
-          <p class="text-center text-small text-muted">
-            <i>Created by set 2025/26 Software Engineering</i>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(26,26,46,0.9); backdrop-filter: blur(10px);">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="/">
+        <i class="fas fa-calculator me-2"></i>VUNA Calc
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/calculator">Calculator</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="row align-items-center">
+        <div class="col-lg-8 mx-auto text-center animate-fade-in">
+          <h1>VUNA Calculator</h1>
+          <p class="lead">
+            A powerful, feature-rich scientific calculator built for students, engineers, and professionals.
+            From basic arithmetic to advanced probability, conversions, and graphing — all in one tool.
+          </p>
+          <a href="/calculator" class="btn-hero">
+            Launch Calculator <i class="fas fa-arrow-right"></i>
+          </a>
+          <p class="mt-3 text-white-50">
+            <small>Created by Set 2025/26 Software Engineering</small>
           </p>
         </div>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="card calculator-card">
-              <div class="card-body p-4">
-                <div class="calculator">
-                  <div class="display-container">
-                    <input type="text" class="form-control" id="result" placeholder="0" disabled />
-                  </div>
+      </div>
+    </div>
+  </section>
 
-                  <div class="btn-grid">
-                    <button class="btn btn-light" onclick="bracketToResult('(')">(</button>
-                    <button class="btn btn-light" onclick="bracketToResult(')')">)</button>
-                    <button class="btn btn-light" onclick="backspace()">←</button>
-
-                    <!-- Row trig -->
-                    <button class="btn btn-action" onclick="clearResult()">AC</button>
-
-                    <!-- Row 2 -->
-                    <button class="btn btn-light" onclick="appendToResult(7)">7</button>
-                    <button class="btn btn-light" onclick="appendToResult(8)">8</button>
-                    <button class="btn btn-light" onclick="appendToResult(9)">9</button>
-
-                    <!-- Row 3 -->
-                    <button class="btn btn-operator" onclick="operatorToResult('/')">÷</button>
-                    <button class="btn btn-light" onclick="appendToResult(4)">4</button>
-                    <button class="btn btn-light" onclick="appendToResult(5)">5</button>
-                    <button class="btn btn-light" onclick="appendToResult(6)">6</button>
-
-                    <!-- Row 4 -->
-                    <button class="btn btn-operator" onclick="operatorToResult('*')">×</button>
-                    <button class="btn btn-light" onclick="appendToResult(1)">1</button>
-                    <button class="btn btn-light" onclick="appendToResult(2)">2</button>
-                    <button class="btn btn-light" onclick="appendToResult(3)">3</button>
-
-                    <!-- Row 5 -->
-                    <button class="btn btn-operator" onclick="operatorToResult('+')">+</button>
-                    <button class="btn btn-light" onclick="appendToResult('.')">.</button>
-                    <button class="btn btn-light" onclick="appendToResult(0)">0</button>
-                    <button class="btn btn-operator" onclick="percentToResult('%')">%</button>
-
-                    <!-- Row 6 -->
-                    <button class="btn btn-operator" onclick="operatorToResult('-')">−</button>
-                    <button class="btn btn-special" onclick="probabilityToResult('nPr')">nPr</button>
-                    <button class="btn btn-special" onclick="probabilityToResult('nCr')">nCr</button>
-                    <button class="btn btn-special" onclick="calculateFactorial()">n!</button>
-
-                    <!-- Row 9 -->
-                    <button class="btn btn-equals" onclick="calculateResult()">=</button>
-                  </div>
-                </div>
-
-                <!-- Probability Calculator Accordion -->
-                <div class="accordion mt-4" id="probabilityAccordion">
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingProbability">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseProbability" aria-expanded="false" aria-controls="collapseProbability">
-                        🎲 Probability Calculator
-                      </button>
-                    </h2>
-                    <div id="collapseProbability" class="accordion-collapse collapse" aria-labelledby="headingProbability"
-                      data-bs-parent="#probabilityAccordion">
-                      <div class="accordion-body">
-                        <p class="text-muted small mb-3">Calculate probabilities for common scenarios</p>
-
-                        <!-- Probability Type Selection -->
-                        <div class="mb-3">
-                          <label class="form-label small" style="font-weight: 600;">Calculation Type</label>
-                          <select class="form-select form-select-sm" id="probability-type"
-                            onchange="updateProbabilityInputs()">
-                            <option value="">-- Select Type --</option>
-                            <option value="single">Probability of Single Event</option>
-                            <option value="and">P(A and B) for Independent Events</option>
-                            <option value="or">P(A or B) for Mutually Exclusive Events</option>
-                            <option value="conditional">Conditional Probability P(A|B)</option>
-                            <option value="binomial">Binomial Probability</option>
-                            <option value="complement">Complement Probability (1 - P)</option>
-                          </select>
-                        </div>
-
-                        <!-- Dynamic Inputs Container -->
-                        <div id="probability-inputs-container"></div>
-
-                        <!-- Calculate Button -->
-                        <div class="d-grid gap-2 mb-3">
-                          <button class="btn btn-primary btn-sm" onclick="calculateProbability()">
-                            Calculate Probability
-                          </button>
-                          <button class="btn btn-outline-secondary btn-sm" onclick="clearProbabilityCalculator()">
-                            Clear
-                          </button>
-                        </div>
-
-                        <!-- Result Display -->
-                        <div id="probability-result" class="alert alert-info py-2 px-3 mb-0" style="display: none;">
-                          <div class="mb-2"><strong>Result:</strong> <span id="probability-value"></span>
-                          </div>
-                          <div class="mb-2"><strong>Formula Used:</strong> <span
-                              id="probability-formula"></span>
-                          </div>
-                          <div><strong>Explanation:</strong> <span id="probability-explanation"
-                              style="font-style: italic;"></span></div>
-                        </div>
-
-                        <!-- Examples -->
-                        <div class="alert alert-light py-2 px-3 mt-3 mb-0 border" style="font-size: 0.85rem;">
-                          <strong>Examples:</strong><br>
-                          • <strong>Single Event:</strong> Rolling a 6 on a fair die (P = 1/6 ≈ 0.1667)<br>
-                          • <strong>P(A and B):</strong> Flipping heads twice in a row (0.5 * 0.5 = 0.25)<br>
-                          • <strong>P(A or B):</strong> Drawing a heart or a diamond from a deck (13/52 +
-                          13/52 =
-                          0.5)<br>
-                          • <strong>Binomial:</strong> Probability of exactly 3 heads in 5 coin flips ≈ 0.3125
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- END Probability Calculator Section -->
-
-              </div>
-            </div>
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="container">
+      <div class="row">
+        <div class="col-6 col-md-3 mb-4 mb-md-0">
+          <div class="stat-item">
+            <span class="stat-number">20+</span>
+            <span class="stat-label">Features</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4 mb-md-0">
+          <div class="stat-item">
+            <span class="stat-number">6</span>
+            <span class="stat-label">Probability Types</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <span class="stat-number">5</span>
+            <span class="stat-label">Languages</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label">Possibilities</span>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-title">
+        <h2>Powerful Features</h2>
+        <p>Everything you need for calculations, all in one place</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon blue"><i class="fas fa-calculator"></i></div>
+            <h4>Scientific Calculator</h4>
+            <p>Basic arithmetic, trigonometry, logarithms, factorials, permutations and combinations — all at your fingertips.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon green"><i class="fas fa-dice"></i></div>
+            <h4>Probability Calculator</h4>
+            <p>Calculate single events, joint probabilities, conditional probability, binomial distributions, and complements.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon orange"><i class="fas fa-exchange-alt"></i></div>
+            <h4>Unit Converters</h4>
+            <p>Convert between length, weight, temperature, area, data storage, and real-time currency exchange rates.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon purple"><i class="fas fa-chart-line"></i></div>
+            <h4>Graphing Tool</h4>
+            <p>Plot mathematical functions with interactive zoom, pan, and analysis tools including roots and extrema.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon red"><i class="fas fa-globe"></i></div>
+            <h4>Multi-Language</h4>
+            <p>Read results in English, Hausa, Yoruba, Igbo, Portuguese, and Dutch with text-to-speech support.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card">
+            <div class="feature-icon teal"><i class="fas fa-history"></i></div>
+            <h4>Calculation History</h4>
+            <p>Save, review, and reuse past calculations with persistent local storage and easy recall.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0">
+          <div class="about-img">
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); height: 400px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+              <i class="fas fa-calculator" style="font-size: 8rem; color: rgba(255,255,255,0.3);"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <h2 class="fw-bold mb-4">About the Project</h2>
+          <p class="lead text-muted">VUNA Calculator is a comprehensive web-based calculation tool developed as a Software Engineering project.</p>
+          <p class="text-muted">Built with modern web technologies including HTML5, CSS3, Bootstrap 5, and vanilla JavaScript, this calculator demonstrates advanced frontend development skills while providing real utility for users.</p>
+          <ul class="list-unstyled mt-4">
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Clean, responsive design</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Dark mode support</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Keyboard shortcuts</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Voice input support</li>
+            <li class="mb-3"><i class="fas fa-check-circle text-success me-2"></i> Camera math solver</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container">
+      <h2>Ready to Calculate?</h2>
+      <p>Jump into the calculator and explore all the features</p>
+      <a href="/calculator" class="btn-hero" style="background: white; color: #667eea;">
+        Open Calculator <i class="fas fa-arrow-right"></i>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <p class="mb-2">
+        <strong>VUNA Calculator</strong> — Created by Set 2025/26 Software Engineering
+      </p>
+      <p class="mb-0">
+        <a href="/calculator">Calculator</a> • 
+        <a href="#features">Features</a> • 
+        <a href="#about">About</a>
+      </p>
+      <p class="mt-3 text-white-50 small">
+        &copy; 2026 VUNA Calculator. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Floating Calculator Button -->
+  <a href="/calculator" class="float-calc" title="Open Calculator">
+    <i class="fas fa-calculator"></i>
+  </a>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
 </body>
-
 </html>
