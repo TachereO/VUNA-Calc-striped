@@ -295,3 +295,17 @@ body {
 .dark-mode .math-insight-box {
   background: rgba(255,255,255,0.08);
 }
+
+/* Probability buttons — nPr / nCr */
+.btn-probability {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+}
+
+.btn-probability:hover {
+  background: linear-gradient(135deg, #38ef7d 0%, #11998e 100%);
+  color: white;
+}

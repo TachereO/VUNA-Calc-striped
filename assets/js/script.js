@@ -185,3 +185,47 @@ function calculateResult() {
 function updateResult() {
   document.getElementById("result").value = currentExpression || "0";
 }
+
+// ------------------------------
+// Probability: nPr and nCr
+// ------------------------------
+function factorial(n) {
+  if (n < 0 || !Number.isInteger(n)) return NaN;
+  if (n === 0 || n === 1) return 1;
+  let result = 1;
+  for (let i = 2; i <= n; i++) result *= i;
+  return result;
+}
+
+function probabilityToResult(type) {
+  if (!currentExpression) return;
+
+  // Look for a pattern like  <number><operator><number>  at the end
+  // e.g. "5" alone (n entered, r will be typed next via nPr marker)
+  // Strategy: inject a special token nPr( or nCr( so the user types: n nPr r
+  // We append the token as an infix marker that calculateExpression will resolve.
+  currentExpression += type === "nPr" ? "nPr" : "nCr";
+  updateResult();
+}
+
+// Extend normalizeExpression to handle nPr / nCr tokens
+const _origNormalize = normalizeExpression;
+function normalizeExpression(expr) {
+  let e = _origNormalize(expr);
+  // Replace  a nPr b  →  nPr(a,b)   and  a nCr b  →  nCr(a,b)
+  e = e.replace(/(\d+(?:\.\d+)?)\s*nPr\s*(\d+(?:\.\d+)?)/g, "nPr($1,$2)");
+  e = e.replace(/(\d+(?:\.\d+)?)\s*nCr\s*(\d+(?:\.\d+)?)/g, "nCr($1,$2)");
+  return e;
+}
+
+function nPr(n, r) {
+  n = Math.round(n); r = Math.round(r);
+  if (r > n || n < 0 || r < 0) return NaN;
+  return factorial(n) / factorial(n - r);
+}
+
+function nCr(n, r) {
+  n = Math.round(n); r = Math.round(r);
+  if (r > n || n < 0 || r < 0) return NaN;
+  return factorial(n) / (factorial(r) * factorial(n - r));
+}
