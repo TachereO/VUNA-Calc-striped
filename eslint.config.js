@@ -19,7 +19,23 @@ module.exports = [
         evaluateExpression: 'readonly',
         describe: 'readonly',
         it: 'readonly',
-        expect: 'readonly'
+        expect: 'readonly',
+        // Calculator functions called from HTML onclick
+        toggleTheme: 'readonly',
+        appendToResult: 'readonly',
+        bracketToResult: 'readonly',
+        backspace: 'readonly',
+        operatorToResult: 'readonly',
+        clearResult: 'readonly',
+        percentToResult: 'readonly',
+        calculateResult: 'readonly',
+        probabilityToResult: 'readonly',
+        nPr: 'readonly',
+        nCr: 'readonly',
+        normalizeExpression: 'readonly',
+        factorial: 'readonly',
+        updateResult: 'readonly',
+        calculateExpression: 'readonly'
       }
     },
     rules: {
