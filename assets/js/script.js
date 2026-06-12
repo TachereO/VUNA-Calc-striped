@@ -95,10 +95,24 @@ function clearResult() {
   updateResult();
 }
 
+function normalizeExpression(expr) {
+  return expr
+    .replace(/asin\(/g, "asinDeg(")
+    .replace(/acos\(/g, "acosDeg(")
+    .replace(/atan\(/g, "atanDeg(")
+    .replace(/sin\(/g, "sinDeg(")
+    .replace(/cos\(/g, "cosDeg(")
+    .replace(/tan\(/g, "tanDeg(")
+    .replace(/asinh\(/g, "asinh(")
+    .replace(/sinh\(/g, "sinh(")
+    .replace(/\be\b/g, "Math.E")
+    .replace(/\bpi\b/g, "Math.PI");
+}
+
 function percentToResult() {
   if (!currentExpression) return;
 
-  const match = currentExpression.match(/(.+?)(\*\*|[+\-*/])([0-9.]*)$/);
+  const match = currentExpression.match(/(.+?)(\*\*|[+\-*/^])([0-9.]*)$/);
 
   if (!match) {
     const num = parseFloat(currentExpression);
@@ -128,7 +142,8 @@ function percentToResult() {
 // ------------------------------
 function calculateExpression(expression) {
   try {
-    let normalizedExpression = expression.replace(/\bans\b/gi, LAST_RESULT);
+    let normalizedExpression = normalizeExpression(expression);
+    normalizedExpression = normalizedExpression.replace(/\bans\b/gi, LAST_RESULT);
     let result = evaluateExpression(normalizedExpression);
     console.log("Calculated result for expression:", expression, "->", result);
     return result;
