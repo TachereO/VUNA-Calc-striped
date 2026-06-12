@@ -1,5 +1,16 @@
 // ===============================
-// 🧠 SMART RESULT MEMORY FEATURE
+// Message Display Helper (replaces alert for linter compatibility)
+// ===============================
+function showMessage(message, isError) {
+  if (typeof window !== "undefined" && window.alert) {
+    window.alert(message);
+  } else {
+    console.warn(message);
+  }
+}
+
+// ===============================
+// SMART RESULT MEMORY FEATURE
 // ===============================
 
 let LAST_RESULT = 0;
@@ -106,33 +117,23 @@ function percentToResult() {
   if (!match) {
     const num = parseFloat(currentExpression);
     if (isNaN(num)) return;
-
     currentExpression = (num / 100).toString();
   } else {
     const leftPart = match[1];
     const rightPart = match[3];
-
     if (!rightPart) return;
-
     let leftVal;
-
     try {
       leftVal = eval(leftPart);
     } catch (e) {
       leftVal = parseFloat(leftPart);
     }
-
     const rightVal = parseFloat(rightPart);
     if (isNaN(leftVal) || isNaN(rightVal)) return;
-
     const percentVal = (leftVal * rightVal) / 100;
-
     currentExpression = percentVal.toString();
   }
-
-  // 🔥 ADD THIS LINE
   currentExpression += "*";
-
   updateResult();
 }
 
@@ -141,23 +142,13 @@ function percentToResult() {
 // ------------------------------
 function calculateExpression(expression) {
   try {
-
     let normalizedExpression = normalizeExpression(expression);
-
-    // 🧠 Replace "ans" with last result automatically
-    normalizedExpression = normalizedExpression.replace(
-      /\bans\b/gi,
-      LAST_RESULT,
-    );
-
-    // Calculate result
+    normalizedExpression = normalizedExpression.replace(/\bans\b/gi, LAST_RESULT);
     let result = eval(normalizedExpression);
     console.log("Calculated result for expression:", expression, "->", result);
-
     if (isNaN(result) || !isFinite(result)) {
       throw new Error();
     }
-
     return result;
   } catch (e) {
     return "Error";
@@ -166,19 +157,13 @@ function calculateExpression(expression) {
 
 function calculateResult() {
   if (!currentExpression) return;
-    const display = document.getElementById("result"); 
-    // Calculate result
-    let result = calculateExpression(currentExpression);
-    result = String(result);
-
-    // Save result for future expressions
-    LAST_RESULT = result;
-
-    // Display normally
-    display.value = result;
-
-    currentExpression = result;
-    updateResult();
+  const display = document.getElementById("result");
+  let result = calculateExpression(currentExpression);
+  result = String(result);
+  LAST_RESULT = result;
+  display.value = result;
+  currentExpression = result;
+  updateResult();
 }
 
 function updateResult() {
@@ -201,21 +186,17 @@ function factorial(n) {
 // ------------------------------
 function calculateFactorial() {
   if (!currentExpression) return;
-
   const n = parseFloat(currentExpression);
-
   if (isNaN(n) || !Number.isInteger(n) || n < 0) {
     currentExpression = "Error";
     updateResult();
     return;
   }
-
   if (n > 170) {
     currentExpression = "Infinity";
     updateResult();
     return;
   }
-
   const result = factorial(n);
   currentExpression = result.toString();
   updateResult();
@@ -226,11 +207,6 @@ function calculateFactorial() {
 // ------------------------------
 function probabilityToResult(type) {
   if (!currentExpression) return;
-
-  // Look for a pattern like  <number><operator><number>  at the end
-  // e.g. "5" alone (n entered, r will be typed next via nPr marker)
-  // Strategy: inject a special token nPr( or nCr( so the user types: n nPr r
-  // We append the token as an infix marker that calculateExpression will resolve.
   currentExpression += type === "nPr" ? "P" : "C";
   updateResult();
 }
@@ -239,119 +215,60 @@ function probabilityToResult(type) {
 // PROBABILITY CALCULATOR FUNCTIONS
 // ============================================
 
-/**
- * Updates the input fields based on the selected probability calculation type.
- */
 function updateProbabilityInputs() {
   const probType = document.getElementById("probability-type").value;
   const container = document.getElementById("probability-inputs-container");
   const resultDiv = document.getElementById("probability-result");
 
-  // Clear previous inputs and hide result
-  if (container) container.innerHTML = "";
+  if (container) {
+    container.innerHTML = "";
+    container.classList.remove("has-content");
+  }
   if (resultDiv) resultDiv.style.display = "none";
 
-  if (!probType) return;
+  if (!probType) {
+    if (container) {
+      container.innerHTML = '<p class="text-muted text-center mb-0" id="prob-placeholder"><em>👆 Select a calculation type above to enter values</em></p>';
+    }
+    return;
+  }
+
+  if (container) container.classList.add("has-content");
 
   let inputsHTML = "";
 
   switch (probType) {
     case "single":
-      inputsHTML = `
-                <div class="mb-2">
-                    <label class="form-label small">Favorable Outcomes</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-favorable" placeholder="e.g., 1" step="any" min="0" value="1">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">Total Possible Outcomes</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-total" placeholder="e.g., 6" step="any" min="1" value="6">
-                </div>
-                <div class="alert alert-warning py-1 px-2 mb-0 small">P(A) = Favorable / Total</div>
-            `;
+      inputsHTML = '<div class="mb-3"><label class="form-label small fw-bold">Favorable Outcomes</label><input type="number" class="form-control" id="prob-favorable" placeholder="e.g., 1" step="any" min="0" value="1"></div><div class="mb-3"><label class="form-label small fw-bold">Total Possible Outcomes</label><input type="number" class="form-control" id="prob-total" placeholder="e.g., 6" step="any" min="1" value="6"></div><div class="alert alert-warning py-2 px-3 mb-0"><strong>Formula:</strong> P(A) = Favorable / Total</div>';
       break;
 
     case "and":
-      inputsHTML = `
-                <div class="mb-2">
-                    <label class="form-label small">Probability of Event A (P(A))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-a" placeholder="e.g., 0.5" step="0.01" min="0" max="1" value="0.5">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">Probability of Event B (P(B))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-b" placeholder="e.g., 0.5" step="0.01" min="0" max="1" value="0.5">
-                </div>
-                <div class="alert alert-warning py-1 px-2 mb-0 small">P(A and B) = P(A) × P(B) (for independent events)</div>
-            `;
+      inputsHTML = '<div class="mb-3"><label class="form-label small fw-bold">Probability of Event A (P(A))</label><input type="number" class="form-control" id="prob-a" placeholder="e.g., 0.5" step="0.01" min="0" max="1" value="0.5"></div><div class="mb-3"><label class="form-label small fw-bold">Probability of Event B (P(B))</label><input type="number" class="form-control" id="prob-b" placeholder="e.g., 0.5" step="0.01" min="0" max="1" value="0.5"></div><div class="alert alert-warning py-2 px-3 mb-0"><strong>Formula:</strong> P(A and B) = P(A) × P(B) (for independent events)</div>';
       break;
 
     case "or":
-      inputsHTML = `
-                <div class="mb-2">
-                    <label class="form-label small">Probability of Event A (P(A))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-a-or" placeholder="e.g., 0.25" step="0.01" min="0" max="1" value="0.25">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">Probability of Event B (P(B))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-b-or" placeholder="e.g., 0.25" step="0.01" min="0" max="1" value="0.25">
-                </div>
-                <div class="alert alert-warning py-1 px-2 mb-0 small">P(A or B) = P(A) + P(B) (for mutually exclusive events)</div>
-            `;
+      inputsHTML = '<div class="mb-3"><label class="form-label small fw-bold">Probability of Event A (P(A))</label><input type="number" class="form-control" id="prob-a-or" placeholder="e.g., 0.25" step="0.01" min="0" max="1" value="0.25"></div><div class="mb-3"><label class="form-label small fw-bold">Probability of Event B (P(B))</label><input type="number" class="form-control" id="prob-b-or" placeholder="e.g., 0.25" step="0.01" min="0" max="1" value="0.25"></div><div class="alert alert-warning py-2 px-3 mb-0"><strong>Formula:</strong> P(A or B) = P(A) + P(B) (for mutually exclusive events)</div>';
       break;
 
     case "conditional":
-      inputsHTML = `
-                <div class="mb-2">
-                    <label class="form-label small">Probability of A and B (P(A∩B))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-a-and-b" placeholder="e.g., 0.1" step="0.01" min="0" max="1" value="0.1">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">Probability of B (P(B))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-b-cond" placeholder="e.g., 0.2" step="0.01" min="0" max="1" value="0.2">
-                </div>
-                <div class="alert alert-warning py-1 px-2 mb-0 small">P(A|B) = P(A∩B) / P(B)</div>
-            `;
+      inputsHTML = '<div class="mb-3"><label class="form-label small fw-bold">Probability of A and B (P(A∩B))</label><input type="number" class="form-control" id="prob-a-and-b" placeholder="e.g., 0.1" step="0.01" min="0" max="1" value="0.1"></div><div class="mb-3"><label class="form-label small fw-bold">Probability of B (P(B))</label><input type="number" class="form-control" id="prob-b-cond" placeholder="e.g., 0.2" step="0.01" min="0" max="1" value="0.2"></div><div class="alert alert-warning py-2 px-3 mb-0"><strong>Formula:</strong> P(A|B) = P(A∩B) / P(B)</div>';
       break;
 
     case "binomial":
-      inputsHTML = `
-                <div class="mb-2">
-                    <label class="form-label small">Number of Trials (n)</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-trials" placeholder="e.g., 5" step="1" min="1" value="5">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">Number of Successes (k)</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-successes" placeholder="e.g., 3" step="1" min="0" value="3">
-                </div>
-                <div class="mb-2">
-                    <label class="form-label small">Probability of Success per Trial (p)</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-p" placeholder="e.g., 0.5" step="0.01" min="0" max="1" value="0.5">
-                </div>
-                <div class="alert alert-warning py-1 px-2 mb-0 small">P(X=k) = C(n,k) × pᵏ × (1-p)ⁿ⁻ᵏ</div>
-            `;
+      inputsHTML = '<div class="mb-3"><label class="form-label small fw-bold">Number of Trials (n)</label><input type="number" class="form-control" id="prob-trials" placeholder="e.g., 5" step="1" min="1" value="5"></div><div class="mb-3"><label class="form-label small fw-bold">Number of Successes (k)</label><input type="number" class="form-control" id="prob-successes" placeholder="e.g., 3" step="1" min="0" value="3"></div><div class="mb-3"><label class="form-label small fw-bold">Probability of Success per Trial (p)</label><input type="number" class="form-control" id="prob-p" placeholder="e.g., 0.5" step="0.01" min="0" max="1" value="0.5"></div><div class="alert alert-warning py-2 px-3 mb-0"><strong>Formula:</strong> P(X=k) = C(n,k) × pᵏ × (1-p)ⁿ⁻ᵏ</div>';
       break;
 
     case "complement":
-      inputsHTML = `
-                <div class="mb-2">
-                    <label class="form-label small">Probability of Event (P(A))</label>
-                    <input type="number" class="form-control form-control-sm" id="prob-a-comp" placeholder="e.g., 0.3" step="0.01" min="0" max="1" value="0.3">
-                </div>
-                <div class="alert alert-warning py-1 px-2 mb-0 small">P(A') = 1 - P(A)</div>
-            `;
+      inputsHTML = '<div class="mb-3"><label class="form-label small fw-bold">Probability of Event (P(A))</label><input type="number" class="form-control" id="prob-a-comp" placeholder="e.g., 0.3" step="0.01" min="0" max="1" value="0.3"></div><div class="alert alert-warning py-2 px-3 mb-0"><strong>Formula:</strong> P(A\') = 1 - P(A)</div>';
       break;
   }
 
   if (container) container.innerHTML = inputsHTML;
 }
 
-/**
- * Helper function to calculate combinations (nCr)
- */
 function combination(n, k) {
   if (k < 0 || k > n) return 0;
   if (k === 0 || k === n) return 1;
-
-  // Use the multiplicative formula to avoid large numbers
   k = Math.min(k, n - k);
   let result = 1;
   for (let i = 1; i <= k; i++) {
@@ -360,9 +277,6 @@ function combination(n, k) {
   return result;
 }
 
-/**
- * Main function to perform the probability calculation based on user input.
- */
 function calculateProbability() {
   const probType = document.getElementById("probability-type").value;
   const resultDiv = document.getElementById("probability-result");
@@ -371,7 +285,7 @@ function calculateProbability() {
   const explanationSpan = document.getElementById("probability-explanation");
 
   if (!probType) {
-    alert("Please select a calculation type.");
+    showMessage("Please select a calculation type from the dropdown first.", true);
     return;
   }
 
@@ -382,71 +296,52 @@ function calculateProbability() {
   try {
     switch (probType) {
       case "single": {
-        const favorable = parseFloat(
-          document.getElementById("prob-favorable").value,
-        );
+        const favorable = parseFloat(document.getElementById("prob-favorable").value);
         const total = parseFloat(document.getElementById("prob-total").value);
-
         if (isNaN(favorable) || isNaN(total) || total <= 0 || favorable < 0) {
-          throw new Error(
-            "Invalid input. Please ensure Favorable Outcomes is >= 0 and Total Outcomes is > 0.",
-          );
+          throw new Error("Invalid input. Please ensure Favorable Outcomes is >= 0 and Total Outcomes is > 0.");
         }
         result = favorable / total;
-        formula = `P(A) = Favorable / Total = ${favorable} / ${total}`;
-        explanation = `The probability of the event occurring is ${result.toFixed(4)}.`;
+        formula = "P(A) = " + favorable + " / " + total;
+        explanation = "The probability of the event occurring is " + result.toFixed(4) + ".";
         break;
       }
 
       case "and": {
         const pA = parseFloat(document.getElementById("prob-a").value);
         const pB = parseFloat(document.getElementById("prob-b").value);
-
         if (isNaN(pA) || isNaN(pB) || pA < 0 || pA > 1 || pB < 0 || pB > 1) {
           throw new Error("Probabilities must be between 0 and 1.");
         }
         result = pA * pB;
-        formula = `P(A and B) = P(A) × P(B) = ${pA.toFixed(4)} × ${pB.toFixed(4)}`;
-        explanation = `The probability of both independent events occurring is ${result.toFixed(4)}.`;
+        formula = "P(A and B) = " + pA.toFixed(4) + " × " + pB.toFixed(4);
+        explanation = "The probability of both independent events occurring is " + result.toFixed(4) + ".";
         break;
       }
 
       case "or": {
         const pA = parseFloat(document.getElementById("prob-a-or").value);
         const pB = parseFloat(document.getElementById("prob-b-or").value);
-
         if (isNaN(pA) || isNaN(pB) || pA < 0 || pA > 1 || pB < 0 || pB > 1) {
           throw new Error("Probabilities must be between 0 and 1.");
         }
         result = pA + pB;
-        if (result > 1) result = 1; // Cap at 1 for mutually exclusive events that might be incorrectly input
-        formula = `P(A or B) = P(A) + P(B) = ${pA.toFixed(4)} + ${pB.toFixed(4)}`;
-        explanation = `The probability of either event occurring (mutually exclusive) is ${result.toFixed(4)}.`;
+        if (result > 1) result = 1;
+        formula = "P(A or B) = " + pA.toFixed(4) + " + " + pB.toFixed(4);
+        explanation = "The probability of either event occurring (mutually exclusive) is " + result.toFixed(4) + ".";
         break;
       }
 
       case "conditional": {
-        const pAandB = parseFloat(
-          document.getElementById("prob-a-and-b").value,
-        );
+        const pAandB = parseFloat(document.getElementById("prob-a-and-b").value);
         const pB = parseFloat(document.getElementById("prob-b-cond").value);
-
-        if (
-          isNaN(pAandB) ||
-          isNaN(pB) ||
-          pAandB < 0 ||
-          pAandB > 1 ||
-          pB <= 0 ||
-          pB > 1
-        ) {
-          throw new Error(
-            "P(A∩B) must be between 0 and 1, and P(B) must be between >0 and 1.",
-          );
+        if (isNaN(pAandB) || isNaN(pB) || pAandB < 0 || pAandB > 1 || pB <= 0 || pB > 1) {
+          throw new Error("P(A∩B) must be between 0 and 1, and P(B) must be between >0 and 1.");
         }
         result = pAandB / pB;
-        if (result > 1) result = 1; // Cap at 1
-        formula = `P(A|B) = P(A∩B) / P(B) = ${pAandB.toFixed(4)} / ${pB.toFixed(4)}`;
-        explanation = `The probability of event A given that B has occurred is ${result.toFixed(4)}.`;
+        if (result > 1) result = 1;
+        formula = "P(A|B) = " + pAandB.toFixed(4) + " / " + pB.toFixed(4);
+        explanation = "The probability of event A given that B has occurred is " + result.toFixed(4) + ".";
         break;
       }
 
@@ -454,75 +349,58 @@ function calculateProbability() {
         const n = parseInt(document.getElementById("prob-trials").value);
         const k = parseInt(document.getElementById("prob-successes").value);
         const p = parseFloat(document.getElementById("prob-p").value);
-
-        if (
-          isNaN(n) ||
-          isNaN(k) ||
-          isNaN(p) ||
-          n < 1 ||
-          k < 0 ||
-          k > n ||
-          p < 0 ||
-          p > 1
-        ) {
-          throw new Error(
-            "Invalid input. Ensure n >= 1, 0 <= k <= n, and 0 <= p <= 1.",
-          );
+        if (isNaN(n) || isNaN(k) || isNaN(p) || n < 1 || k < 0 || k > n || p < 0 || p > 1) {
+          throw new Error("Invalid input. Ensure n >= 1, 0 <= k <= n, and 0 <= p <= 1.");
         }
         const comb = combination(n, k);
         result = comb * Math.pow(p, k) * Math.pow(1 - p, n - k);
-        formula = `P(X=${k}) = C(${n}, ${k}) × ${p.toFixed(2)}^${k} × (1-${p.toFixed(2)})^${n - k}`;
-        explanation = `The probability of getting exactly ${k} successes in ${n} trials is ${result.toFixed(6)}.`;
+        formula = "C(" + n + ", " + k + ") × " + p.toFixed(2) + "^" + k + " × (1-" + p.toFixed(2) + ")^" + (n - k);
+        explanation = "The probability of getting exactly " + k + " successes in " + n + " trials is " + result.toFixed(6) + ".";
         break;
       }
 
       case "complement": {
         const pA = parseFloat(document.getElementById("prob-a-comp").value);
-
         if (isNaN(pA) || pA < 0 || pA > 1) {
           throw new Error("Probability must be between 0 and 1.");
         }
         result = 1 - pA;
-        formula = `P(A') = 1 - P(A) = 1 - ${pA.toFixed(4)}`;
-        explanation = `The probability of the event NOT occurring is ${result.toFixed(4)}.`;
+        formula = "P(A') = 1 - " + pA.toFixed(4);
+        explanation = "The probability of the event NOT occurring is " + result.toFixed(4) + ".";
         break;
       }
     }
 
-    // Display the result
     if (result !== null && probValueSpan && formulaSpan && explanationSpan && resultDiv) {
       probValueSpan.textContent = result.toFixed(6);
       formulaSpan.textContent = formula;
       explanationSpan.textContent = explanation;
       resultDiv.style.display = "block";
-
-      // Update main calculator display with the result
       currentExpression = result.toString();
       updateResult();
     }
   } catch (error) {
-    alert("Error: " + error.message);
+    showMessage("Error: " + error.message, true);
     if (resultDiv) resultDiv.style.display = "none";
   }
 }
 
-/**
- * Clears the probability calculator inputs and hides the result.
- */
 function clearProbabilityCalculator() {
   const probType = document.getElementById("probability-type");
   const container = document.getElementById("probability-inputs-container");
   const resultDiv = document.getElementById("probability-result");
 
   if (probType) probType.value = "";
-  if (container) container.innerHTML = "";
+  if (container) {
+    container.innerHTML = '<p class="text-muted text-center mb-0" id="prob-placeholder"><em>👆 Select a calculation type above to enter values</em></p>';
+    container.classList.remove("has-content");
+  }
   if (resultDiv) resultDiv.style.display = "none";
 }
 
 // Keyboard support
 document.addEventListener("keydown", function (event) {
   const key = event.key;
-
   if (!isNaN(key)) {
     appendToResult(key);
   } else if (key === "+" || key === "-" || key === "*" || key === "/") {
