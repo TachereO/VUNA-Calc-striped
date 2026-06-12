@@ -255,39 +255,32 @@
                     <button class="btn btn-light" onclick="bracketToResult(')')">)</button>
                     <button class="btn btn-light" onclick="backspace()">←</button>
 
-                    <!-- Row trig -->
                     <button class="btn btn-action" onclick="clearResult()">AC</button>
 
-                    <!-- Row 2 -->
                     <button class="btn btn-light" onclick="appendToResult(7)">7</button>
                     <button class="btn btn-light" onclick="appendToResult(8)">8</button>
                     <button class="btn btn-light" onclick="appendToResult(9)">9</button>
 
-                    <!-- Row 3 -->
                     <button class="btn btn-operator" onclick="operatorToResult('/')">÷</button>
                     <button class="btn btn-light" onclick="appendToResult(4)">4</button>
                     <button class="btn btn-light" onclick="appendToResult(5)">5</button>
                     <button class="btn btn-light" onclick="appendToResult(6)">6</button>
 
-                    <!-- Row 4 -->
                     <button class="btn btn-operator" onclick="operatorToResult('*')">×</button>
                     <button class="btn btn-light" onclick="appendToResult(1)">1</button>
                     <button class="btn btn-light" onclick="appendToResult(2)">2</button>
                     <button class="btn btn-light" onclick="appendToResult(3)">3</button>
 
-                    <!-- Row 5 -->
                     <button class="btn btn-operator" onclick="operatorToResult('+')">+</button>
                     <button class="btn btn-light" onclick="appendToResult('.')">.</button>
                     <button class="btn btn-light" onclick="appendToResult(0)">0</button>
                     <button class="btn btn-operator" onclick="percentToResult('%')">%</button>
 
-                    <!-- Row 6 -->
                     <button class="btn btn-operator" onclick="operatorToResult('-')">−</button>
                     <button class="btn btn-special" onclick="probabilityToResult('nPr')">nPr</button>
                     <button class="btn btn-special" onclick="probabilityToResult('nCr')">nCr</button>
                     <button class="btn btn-special" onclick="calculateFactorial()">n!</button>
 
-                    <!-- Row 9 -->
                     <button class="btn btn-equals" onclick="calculateResult()">=</button>
                   </div>
                 </div>
@@ -306,7 +299,6 @@
                       <div class="accordion-body">
                         <p class="text-muted small mb-3">Calculate probabilities for common scenarios</p>
 
-                        <!-- Probability Type Selection -->
                         <div class="mb-3">
                           <label class="form-label small" style="font-weight: 600;">Calculation Type</label>
                           <select class="form-select form-select-sm" id="probability-type"
@@ -321,10 +313,8 @@
                           </select>
                         </div>
 
-                        <!-- Dynamic Inputs Container -->
                         <div id="probability-inputs-container"></div>
 
-                        <!-- Calculate Button -->
                         <div class="d-grid gap-2 mb-3">
                           <button class="btn btn-primary btn-sm" onclick="calculateProbability()">
                             Calculate Probability
@@ -334,7 +324,6 @@
                           </button>
                         </div>
 
-                        <!-- Result Display -->
                         <div id="probability-result" class="alert alert-info py-2 px-3 mb-0" style="display: none;">
                           <div class="mb-2"><strong>Result:</strong> <span id="probability-value"></span>
                           </div>
@@ -345,7 +334,6 @@
                               style="font-style: italic;"></span></div>
                         </div>
 
-                        <!-- Examples -->
                         <div class="alert alert-light py-2 px-3 mt-3 mb-0 border" style="font-size: 0.85rem;">
                           <strong>Examples:</strong><br>
                           • <strong>Single Event:</strong> Rolling a 6 on a fair die (P = 1/6 ≈ 0.1667)<br>
@@ -359,7 +347,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- END Probability Calculator Section -->
 
               </div>
             </div>
@@ -370,7 +357,8 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-  <!-- FIX: Point to the actual location inside the assets folder -->
+  <!-- Load the pure math engine first, then the wiring -->
+  <script src="src/calculator.js"></script>
   <script src="assets/js/script.js"></script>
 </body>
 

@@ -1,5 +1,5 @@
 // ===============================
-// Message Display Helper (replaces alert for linter compatibility)
+// Message Display Helper
 // ===============================
 function showMessage(message, isError) {
   if (typeof window !== "undefined" && window.alert) {
@@ -124,7 +124,7 @@ function percentToResult() {
     if (!rightPart) return;
     let leftVal;
     try {
-      leftVal = eval(leftPart);
+      leftVal = evaluateExpression(leftPart);
     } catch (e) {
       leftVal = parseFloat(leftPart);
     }
@@ -138,17 +138,14 @@ function percentToResult() {
 }
 
 // ------------------------------
-// Calculate Result
+// Calculate Result — NO eval()
 // ------------------------------
 function calculateExpression(expression) {
   try {
     let normalizedExpression = normalizeExpression(expression);
     normalizedExpression = normalizedExpression.replace(/\bans\b/gi, LAST_RESULT);
-    let result = eval(normalizedExpression);
+    let result = evaluateExpression(normalizedExpression);
     console.log("Calculated result for expression:", expression, "->", result);
-    if (isNaN(result) || !isFinite(result)) {
-      throw new Error();
-    }
     return result;
   } catch (e) {
     return "Error";
@@ -207,7 +204,7 @@ function calculateFactorial() {
 // ------------------------------
 function probabilityToResult(type) {
   if (!currentExpression) return;
-  currentExpression += type === "nPr" ? "P" : "C";
+  currentExpression += type === "nPr" ? "nPr" : "nCr";
   updateResult();
 }
 

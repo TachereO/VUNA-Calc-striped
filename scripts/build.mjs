@@ -21,4 +21,10 @@ if (existsSync(join(root, 'assets'))) {
   console.log('Copied: assets/ -> dist/assets/');
 }
 
+// Copy src folder (calculator engine for browser + tests)
+if (existsSync(join(root, 'src'))) {
+  cpSync(join(root, 'src'), join(root, 'dist/src'), { recursive: true });
+  console.log('Copied: src/ -> dist/src/');
+}
+
 console.log('\n✅ Build complete -> dist/');
