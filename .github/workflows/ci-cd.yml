@@ -50,27 +50,22 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc-striped:${{ github.sha }}
 
   deploy:
-    name: Deploy via FTP
+    name: Deploy via SSH
     runs-on: ubuntu-latest
-    needs: [ci]
+    needs: [docker]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment:
       name: production
       url: http://tachere.vudse26.cloud
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          node-version: '20'
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          local-dir: ./dist/
-          server-dir: ./
-          dangerous-clean-slate: true
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /path/to/your/app
+            docker compose pull
+            docker compose up -d --force-recreate
+            docker image prune -f
