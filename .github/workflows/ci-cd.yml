@@ -10,45 +10,80 @@ permissions:
   contents: read
 
 jobs:
+  # ─────────────────────────────────────────
+  # JOB 1: Lint & Test
+  # Runs on every push and pull request to main
+  # ─────────────────────────────────────────
   ci:
     name: Lint & Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm test
-      - uses: actions/upload-artifact@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: coverage
           path: coverage/
           retention-days: 14
 
+  # ─────────────────────────────────────────
+  # JOB 2: Build & Push Docker Image
+  # Only runs on push to main (not pull requests)
+  # Requires JOB 1 to pass first
+  # ─────────────────────────────────────────
   docker:
     name: Docker Build & Push
     runs-on: ubuntu-latest
     needs: [ci]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - uses: docker/build-push-action@v6
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc-striped:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/vuna-calc-striped:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
+  # ─────────────────────────────────────────
+  # JOB 3: Deploy to Server via FTP
+  # Only runs on push to main (not pull requests)
+  # Requires JOB 1 to pass first
+  # Uploads built files to /public_html/ on server
+  # ─────────────────────────────────────────
   deploy:
     name: Deploy via FTP
     runs-on: ubuntu-latest
@@ -58,19 +93,28 @@ jobs:
       name: production
       url: http://tachere.vudse26.cloud
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build
-      - uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Deploy to server via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
           local-dir: ./dist/
-          server-dir: ./
+          server-dir: /public_html/
           dangerous-clean-slate: true
